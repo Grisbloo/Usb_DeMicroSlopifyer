@@ -1,3 +1,12 @@
+Every Single line of code will be recorded here for what it does since comments are not liked by PowerShell
+
+launcher.bat
+powershell.exe -Command "Start-Process powershell.exe -Verb RunAs -ArgumentList '-ExecutionPolicy Bypass -File setup.ps1'"
+the command to run: powershell.exe
+it runs the command using -Verb RunAs to provide admin access
+-ArgumentList tells exactly what to run (in this case: setup.ps1)
+
+setup.ps1
 $BloatwareList = @(
     "Microsoft.XboxApp",
     "Microsoft.XboxGamingOverlay",
@@ -8,30 +17,53 @@ $BloatwareList = @(
     "microsoft.windowscommunicationsapps"
 )
 
+is a list of all the easy to remove files that comes preinstalled on microsoft computers
+
 foreach ($Target in $BloatwareList){
     Get-AppxPackage -Name $Target -AllUsers |
     Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
 }
 
+a simple foreach loop that takes a name from the BloatwareList and for all users removes it
+ErrorAction simply states that if there is an error, keep moving on (assuming the bloated element is not on the pc)
+
 Stop-Process -name "OneDrive" -Force -ErrorAction SilentlyContinue
+
+Stopping OneDrive, forcefully, and not allowing any errors
+
 Start-Process -FilePath "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" -ArgumentList "/uninstall" -Wait
+
+finds the file of the OneDriveSetup and finds its uninstaller. which uninstalls and the powershell must wait for it to be over
 
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" -Name "Desktop" -Value "$env:USERPROFILE\Desktop"
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" -Name "Personal" -Value "$env:USERPROFILE\Documents"
+
+after removal of OneDrive, the registry needs to be updated with the new old folder locations. Personal is the new documents. 
+This removes /OneDrive/Desktop and makes it just Desktop.
+
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{2cc5ca98-6485-489a-920e-b3e88a6ccb3a}" -Value "1" -PropertyType DWord
 Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableSpotlightCollectionOnDesktop" -Value "1" -PropertyType DWord -Force
+
+This removes the "About this picture" icon and the bing wallpapers
 
 winget install --id "Microsoft.VisualStudioCode" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "Docker.DockerDesktop" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "Skillbrains.Lightshot" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "geeksoftware.PDF24Creator" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "Eclipse.Temurin.21.JDK" --silent --accept-source-agreements --accept-package-agreements
+
+These install VisualStudioCode, Docker, Lightshot (for screenshotting), PDF24 (to allow PDF manipulation), and Java
+
 winget install --id "Opera.OperaGX" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "Valve.Steam" --silent --accept-source-agreements --accept-package-agreements
 winget install --id "Discord.DiscordPTB" --silent --accept-source-agreements --accept-package-agreements
 
+These are Personal installs of OperaGX (my browser of choice), Steam (the gaming platform), and DiscordPTB (my communication platform)
 
 $CodePath = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\bin\code.cmd"
+
+Creating a variable so Powershell knows where VSCode is 
+
 & $CodePath --install-extension "ms-python.python"
 & $CodePath --install-extension "ms-dotnettools.csdevkit"
 & $CodePath --install-extension "vscjava.vscode-java-pack"
@@ -41,4 +73,8 @@ $CodePath = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\bin\code.cmd"
 & $CodePath --install-extension "visualstudiocode-unity.unity"
 & $CodePath --install-extension "ms-vscode.cpptools"
 
+These are extensions installed into the VisualStudioCode (Python, C#/.NET, Java, Docker, Github, PowerShell, Unity, C/C++)
+
 wsl --install --no-reboot
+
+This adds Windows subsystems for Linux on the computer and does not restart until the script is fully ran through
