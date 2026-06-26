@@ -1,0 +1,1 @@
+powershell.exe -Command "Start-Process powershell.exe -Verb RunAs -ArgumentList '-ExecutionPolicy Bypass -File setup.ps1'"
