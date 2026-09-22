@@ -4,4 +4,4 @@ The original plan was to keep this private but I'm not sure who needs it or want
 
 Anyways, this is basically what runs via this diagram
 
-![RunningDiagram](Assets/Diagram.png)
+![RunningDiagram](assets/Diagram.png)
